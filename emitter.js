@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
-const isStar = true;
+const isStar = false;
 
 /**
  * Возвращает новый emitter
@@ -12,6 +12,7 @@ const isStar = true;
  */
 function getEmitter() {
     return {
+        events: new Map(),
 
         /**
          * Подписаться на событие
@@ -21,6 +22,18 @@ function getEmitter() {
          */
         on: function (event, context, handler) {
             console.info(event, context, handler);
+            if (!this.events.has(event)) {
+                this.events.set(event, new Map());
+            }
+            if (!this.events.get(event).has(context)) {
+                this.events.get(event).set(context, [handler.bind(context)]);
+            } else {
+                this.events.get(event).get(context)
+                    .push(handler.bind(context));
+            }
+
+
+            return this;
         },
 
         /**
@@ -30,6 +43,14 @@ function getEmitter() {
          */
         off: function (event, context) {
             console.info(event, context);
+            let subeventChecker = new RegExp(`^${event}($|[.])`);
+            this.events.forEach((contxt, name) => {
+                if (subeventChecker.test(name)) {
+                    this.events.get(name).set(context, []);
+                }
+            });
+
+            return this;
         },
 
         /**
@@ -38,6 +59,13 @@ function getEmitter() {
          */
         emit: function (event) {
             console.info(event);
+            getPrefixes(event, '.')
+                .forEach(x => {
+                    (this.events.get(x) || [])
+                        .forEach(context => context.forEach(handler => handler.call(context)));
+                });
+
+            return this;
         },
 
         /**
@@ -50,6 +78,8 @@ function getEmitter() {
          */
         several: function (event, context, handler, times) {
             console.info(event, context, handler, times);
+
+            return this;
         },
 
         /**
@@ -62,8 +92,22 @@ function getEmitter() {
          */
         through: function (event, context, handler, frequency) {
             console.info(event, context, handler, frequency);
+
+            return this;
         }
     };
+}
+
+function getPrefixes(string, separator) {
+    let split = string.split(separator);
+    let prefix = '';
+    let prefixes = [];
+    for (let i = 0; i < split.length; i++) {
+        prefix += (i === 0 ? '' : separator) + split[i];
+        prefixes.unshift(prefix);
+    }
+
+    return prefixes;
 }
 
 module.exports = {
