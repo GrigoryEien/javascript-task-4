@@ -19,6 +19,7 @@ function getEmitter() {
          * @param {String} event
          * @param {Object} context
          * @param {Function} handler
+         * @returns {Object} emitter
          */
         on: function (event, context, handler) {
             console.info(event, context, handler);
@@ -40,6 +41,7 @@ function getEmitter() {
          * Отписаться от события
          * @param {String} event
          * @param {Object} context
+         * @returns {Object} emitter
          */
         off: function (event, context) {
             console.info(event, context);
@@ -56,6 +58,7 @@ function getEmitter() {
         /**
          * Уведомить о событии
          * @param {String} event
+         * @returns {Object} emitter
          */
         emit: function (event) {
             console.info(event);
@@ -75,6 +78,7 @@ function getEmitter() {
          * @param {Object} context
          * @param {Function} handler
          * @param {Number} times – сколько раз получить уведомление
+         * @returns {Object} emitter
          */
         several: function (event, context, handler, times) {
             console.info(event, context, handler, times);
@@ -89,6 +93,7 @@ function getEmitter() {
          * @param {Object} context
          * @param {Function} handler
          * @param {Number} frequency – как часто уведомлять
+         * @returns {Object} emitter
          */
         through: function (event, context, handler, frequency) {
             console.info(event, context, handler, frequency);
